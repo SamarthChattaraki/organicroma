@@ -17,6 +17,8 @@ import {
   FaWhatsapp,
   FaSearch,
 } from "react-icons/fa";
+import { Helmet } from "react-helmet";
+
 import "./OrganicPage.css";
 import AboutUsPage from "./AboutUsPage";
 import TestimonialPage from "./TestimonialPage";
@@ -690,16 +692,15 @@ function Products({ showPopularOnly = false }) {
 }
 
 // ================= Product Detail Page =================
-
 function ProductDetailPage() {
   const { productName } = useParams();
   const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState("description");
   const [mainMedia, setMainMedia] = useState(null);
   const [quantity, setQuantity] = useState(1);
-
-  // ⭐ ADD THIS STATE
   const [showModal, setShowModal] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const product = allProducts.find(
     (p) => p.name.toLowerCase() === productName.toLowerCase()
@@ -714,56 +715,140 @@ function ProductDetailPage() {
     : [];
 
   const videoUrl = product.video || null;
+  const totalSlides = images.length + (videoUrl ? 1 : 0);
 
+  // INITIAL LOAD
   useEffect(() => {
     if (images.length > 0) {
       setMainMedia({ type: "image", src: images[0] });
+      setCurrentIndex(0);
     } else if (videoUrl) {
       setMainMedia({ type: "video", src: videoUrl });
+      setCurrentIndex(images.length);
     }
   }, [images, videoUrl]);
 
-  // ❌ REMOVE ALERT — we will show modal instead
-  const handleBuy = () => {
-    setShowModal(true);
-  };
+  const handleBuy = () => setShowModal(true);
 
   const increment = () => setQuantity((q) => q + 1);
   const decrement = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+
+  // NEXT MEDIA
+  const handleNext = () => {
+    const next = (currentIndex + 1) % totalSlides;
+    setCurrentIndex(next);
+
+    if (next < images.length) {
+      setMainMedia({ type: "image", src: images[next] });
+    } else {
+      setMainMedia({ type: "video", src: videoUrl });
+    }
+  };
+
+  // PREV MEDIA
+  const handlePrev = () => {
+    const prev = (currentIndex - 1 + totalSlides) % totalSlides;
+    setCurrentIndex(prev);
+
+    if (prev < images.length) {
+      setMainMedia({ type: "image", src: images[prev] });
+    } else {
+      setMainMedia({ type: "video", src: videoUrl });
+    }
+  };
+
+  /* ===============================================================
+      AUTO-SCROLL RELATED PRODUCTS — Infinite smooth sliding
+  =============================================================== */
+  const relatedRef = useRef(null);
+
+  useEffect(() => {
+    const slider = relatedRef.current;
+    if (!slider) return;
+
+    let scrollSpeed = 0.6; // smooth speed
+    let rafId;
+
+    const scroll = () => {
+      slider.scrollLeft += scrollSpeed;
+
+      // When slider reaches half (because we doubled items), reset
+      if (slider.scrollLeft >= slider.scrollWidth / 2) {
+        slider.scrollLeft = 0;
+      }
+
+      rafId = requestAnimationFrame(scroll);
+    };
+
+    rafId = requestAnimationFrame(scroll);
+
+    return () => cancelAnimationFrame(rafId);
+  }, []);
+
+  // FILTER RELATED
+  const relatedProducts = allProducts.filter(
+    (p) =>
+      p.tag.toLowerCase() === product.tag.toLowerCase() &&
+      p.name.toLowerCase() !== product.name.toLowerCase()
+  );
+
+  // DUPLICATE LIST FOR INFINITE LOOP
+  const infiniteList = [...relatedProducts, ...relatedProducts];
 
   return (
     <>
       <Header />
 
       <section className="product-detail">
-        {/* Left: Product Media */}
-        <div className="product-images">
-          {mainMedia && mainMedia.type === "image" && (
-            <img src={mainMedia.src} alt={product.name} />
+        {/* LEFT IMAGE/VIDEO AREA */}
+        <div className="product-images" style={{ position: "relative" }}>
+          {totalSlides > 1 && (
+            <button className="prod-arrow left" onClick={handlePrev}>
+              ◀
+            </button>
           )}
-          {mainMedia && mainMedia.type === "video" && (
+
+          {mainMedia?.type === "image" && (
+            <img
+              src={mainMedia.src}
+              alt={product.name}
+              className="main-media"
+            />
+          )}
+
+          {mainMedia?.type === "video" && (
             <video
               src={mainMedia.src}
               controls
               autoPlay
               loop
               muted
-              style={{ width: "100%", borderRadius: "10px" }}
+              className="main-media"
             />
           )}
 
+          {totalSlides > 1 && (
+            <button className="prod-arrow right" onClick={handleNext}>
+              ▶
+            </button>
+          )}
+
+          {/* THUMBNAILS */}
           <div className="image-thumbnails">
             {images.map((img, idx) => (
               <img
                 key={idx}
                 src={img}
-                alt={`${product.name}-${idx}`}
+                alt="thumb"
                 className={
                   mainMedia?.type === "image" && mainMedia?.src === img
                     ? "active-thumb"
                     : ""
                 }
-                onClick={() => setMainMedia({ type: "image", src: img })}
+                onClick={() => {
+                  setMainMedia({ type: "image", src: img });
+                  setCurrentIndex(idx);
+                }}
               />
             ))}
 
@@ -772,7 +857,10 @@ function ProductDetailPage() {
                 className={`video-thumb ${
                   mainMedia?.type === "video" ? "active-thumb" : ""
                 }`}
-                onClick={() => setMainMedia({ type: "video", src: videoUrl })}
+                onClick={() => {
+                  setMainMedia({ type: "video", src: videoUrl });
+                  setCurrentIndex(images.length);
+                }}
               >
                 🎥 Video
               </div>
@@ -780,7 +868,7 @@ function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Right: Product Info */}
+        {/* RIGHT SIDE INFO */}
         <div className="product-info-right">
           <h1>{product.name}</h1>
           <p className="price">₹ {product.price.toFixed(2)}</p>
@@ -793,9 +881,7 @@ function ProductDetailPage() {
             <button onClick={increment}>+</button>
           </div>
 
-          {/* ⭐ Buy Buttons */}
           <div className="buy-section">
-            {/* OPEN MODAL */}
             <button className="btn-buy" onClick={handleBuy}>
               Buy Now
             </button>
@@ -804,26 +890,38 @@ function ProductDetailPage() {
             </button>
           </div>
 
-          {/* Share Section */}
           <div className="share-section">
             <p className="share-label">Share this product on:</p>
             <div className="share-icons">
+              {/* WhatsApp */}
               <a
-                href={`https://wa.me/?text=Check out this product: ${product.name}`}
+                href={`https://wa.me/?text=${encodeURIComponent(
+                  window.location.href
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <FaWhatsapp />
               </a>
+
+              {/* Instagram – only opens & copies link */}
               <a
-                href={`https://www.instagram.com/?url=${window.location.href}`}
+                href="https://www.instagram.com"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("Product link copied! Paste it in Instagram.");
+                }}
               >
                 <FaInstagram />
               </a>
+
+              {/* Facebook */}
               <a
-                href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  window.location.href
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -833,7 +931,7 @@ function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Tabs Section */}
+        {/* TABS */}
         <div className="product-tabs-section">
           <div className="product-tabs">
             <div className="tab-buttons">
@@ -845,12 +943,14 @@ function ProductDetailPage() {
                   Description
                 </button>
               )}
+
               <button
                 className={activeTab === "benefits" ? "active" : ""}
                 onClick={() => setActiveTab("benefits")}
               >
                 Benefits
               </button>
+
               {product.usage && (
                 <button
                   className={activeTab === "usage" ? "active" : ""}
@@ -859,6 +959,7 @@ function ProductDetailPage() {
                   Usage
                 </button>
               )}
+
               {product.ingredients && (
                 <button
                   className={activeTab === "ingredients" ? "active" : ""}
@@ -879,20 +980,17 @@ function ProductDetailPage() {
         </div>
       </section>
 
-      {/* Related Products */}
+      {/* ======================================================
+            RELATED PRODUCTS — INFINITE SMOOTH SLIDER
+      ====================================================== */}
       <section className="related-products-section">
         <h2>Related Products</h2>
-        <div className="related-products-grid">
-          {allProducts
-            .filter(
-              (p) =>
-                p.tag.toLowerCase() === product.tag.toLowerCase() &&
-                p.name.toLowerCase() !== product.name.toLowerCase()
-            )
-            .slice(0, 4)
-            .map((related) => (
+
+        <div className="related-slider-container">
+          <div className="related-slider" ref={relatedRef}>
+            {infiniteList.map((related, index) => (
               <div
-                key={related.id}
+                key={index}
                 className="related-card"
                 onClick={() =>
                   navigate(`/product/${encodeURIComponent(related.name)}`)
@@ -909,13 +1007,13 @@ function ProductDetailPage() {
                 <h3>{related.name}</h3>
               </div>
             ))}
+          </div>
         </div>
       </section>
 
       <Footer />
       <WhatsAppButton />
 
-      {/* ⭐ ADD THIS ORDER MODAL ⭐ */}
       <OrderModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -925,12 +1023,14 @@ function ProductDetailPage() {
     </>
   );
 }
+
 // ================= Videos =================
+
 function Videos() {
   const containerRef = useRef(null);
   const [visibleIds, setVisibleIds] = useState([]);
   const navigate = useNavigate();
-  const isPaused = useRef(false); // ✅ Track pause state
+  const isPaused = useRef(false); // Track pause state
 
   // Detect visible cards
   useEffect(() => {
@@ -983,7 +1083,6 @@ function Videos() {
 
     animationFrameId = requestAnimationFrame(scroll);
 
-    // ✅ Pause/resume events
     const handleMouseEnter = () => (isPaused.current = true);
     const handleMouseLeave = () => (isPaused.current = false);
     const handleTouchStart = () => (isPaused.current = true);
@@ -1016,13 +1115,7 @@ function Videos() {
           const autoplayUrl = `${video.url}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
 
           return (
-            <div
-              key={video.id}
-              data-id={video.id}
-              className="video-card"
-              onClick={() => handleClick(video)}
-              style={{ cursor: "pointer" }}
-            >
+            <div key={video.id} data-id={video.id} className="video-card">
               {visibleIds.includes(video.id.toString()) ? (
                 <iframe
                   width="320"
@@ -1037,7 +1130,16 @@ function Videos() {
               ) : (
                 <div className="video-placeholder">Loading...</div>
               )}
+
               <h3>{video.title}</h3>
+
+              {/* BUY BUTTON (Added) */}
+              <button
+                className="video-buy-btn"
+                onClick={() => handleClick(video)}
+              >
+                Buy Now
+              </button>
             </div>
           );
         })}
@@ -1048,20 +1150,19 @@ function Videos() {
 
 // ================= Footer =================
 export function Footer() {
+  const [openQuick, setOpenQuick] = useState(false);
+  const [openPolicies, setOpenPolicies] = useState(false);
+  const [openCities, setOpenCities] = useState(false);
+
   return (
     <footer className="footer">
       <div className="footer-content">
-        {/* Logo + Contact Info */}
+        {/* ------------ LEFT SIDE ------------- */}
         <div className="footer-logo-contact">
-          <div className="footer-logo-container">
-            <img
-              src="/logo.jpg"
-              alt="OrganicMarket Logo"
-              className="footer-logo"
-            />
-          </div>
+          <img src="/logo.jpg" alt="Logo" className="footer-logo" />
+
           <div className="footer-contact">
-            <p>132, shop name, name, name,</p>
+            <p>132, Shop Name, Market Road</p>
             <p>City - 394150 Karnataka, India</p>
             <p>
               Email:{" "}
@@ -1070,28 +1171,35 @@ export function Footer() {
             <p>
               Phone: <a href="tel:+919099909453">+91-9099909453</a>
             </p>
+          </div>
 
-            <div className="footer-social">
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                <FaFacebookF />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noreferrer">
-                <FaTwitter />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
-                <FaInstagram />
-              </a>
-              <a href="https://youtube.com" target="_blank" rel="noreferrer">
-                <FaYoutube />
-              </a>
-            </div>
+          <div className="footer-social">
+            <a href="#">
+              <FaFacebookF />
+            </a>
+            <a href="#">
+              <FaInstagram />
+            </a>
+            <a href="#">
+              <FaTwitter />
+            </a>
+            <a href="#">
+              <FaYoutube />
+            </a>
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div className="footer-section">
-          <h4>Quick Links</h4>
-          <ul>
+        {/* ------------ QUICK LINKS ------------- */}
+        <div className="footer-section quick-links-section">
+          <div
+            className="footer-dropdown-title"
+            onClick={() => setOpenQuick(!openQuick)}
+          >
+            <h4>Quick Links</h4>
+            <span className="arrow">{openQuick ? "▲" : "▼"}</span>
+          </div>
+
+          <ul className={`footer-links ${openQuick ? "show" : ""}`}>
             <li>
               <Link to="/about-us">About Us</Link>
             </li>
@@ -1103,6 +1211,53 @@ export function Footer() {
             </li>
           </ul>
         </div>
+
+        {/* ------------ POLICIES ------------- */}
+        <div className="footer-section">
+          <div
+            className="footer-dropdown-title"
+            onClick={() => setOpenPolicies(!openPolicies)}
+          >
+            <h4>Policies</h4>
+            <span className="arrow">{openPolicies ? "▲" : "▼"}</span>
+          </div>
+
+          <ul className={`footer-links ${openPolicies ? "show" : ""}`}>
+            <li>
+              <Link to="/privacy-policy">Privacy Policy</Link>
+            </li>
+            <li>
+              <Link to="/terms">Terms & Conditions</Link>
+            </li>
+            <li>
+              <Link to="/refund-policy">Refund Policy</Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* ------------ CITIES WE SERVE ------------- */}
+        <div className="footer-section">
+          <div
+            className="footer-dropdown-title"
+            onClick={() => setOpenCities(!openCities)}
+          >
+            <h4>Cities We Serve</h4>
+            <span className="arrow">{openCities ? "▲" : "▼"}</span>
+          </div>
+
+          <ul className={`footer-links ${openCities ? "show" : ""}`}>
+            <li>Bangalore</li>
+            <li>Mumbai</li>
+            <li>Pune</li>
+            <li>Hyderabad</li>
+            <li>Chennai</li>
+            <li>Delhi NCR</li>
+            <li>Ahmedabad</li>
+          </ul>
+        </div>
+      </div>
+      <div className="footer-bottom">
+        © 2025 Organic Aroma. All Rights Reserved.
       </div>
     </footer>
   );
