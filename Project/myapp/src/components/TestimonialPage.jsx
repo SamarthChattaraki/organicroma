@@ -1,7 +1,9 @@
 // TestimonialPage.jsx
 import React from "react";
-import { Header, Footer, WhatsAppButton } from "./OrganicPage"; // reuse existing components
+import { WhatsAppButton } from "./OrganicPage"; // reuse existing components
 import "./OrganicPage.css";
+import Header from "./Header";
+import Footer from "./Footer";
 
 export default function TestimonialPage() {
   const testimonials = [

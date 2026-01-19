@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { Header, Footer, WhatsAppButton } from "./OrganicPage";
+import { WhatsAppButton } from "./OrganicPage";
 import "./OrganicPage.css";
+import Header from "./Header";
+import Footer from "./Footer";
 
 // 13 sample blog posts
 const blogPosts = [
