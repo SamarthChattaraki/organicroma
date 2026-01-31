@@ -1,0 +1,342 @@
+[
+  {
+    "id": 1,
+    "name": "Elakki Banana",
+    "price": 152,
+    "tag": "Farm Produce",
+    "qty": "100g",
+    "description": "Pure Rajmudi Rice with natural taste and aroma.",
+    "popular": true,
+    "images": ["/image4.jpg", "/image3.jpg", "/image2.jpg"],
+    "video": "/v1.mp4",
+    "benefits": "Rich in fiber and nutrients, promotes digestive health.",
+
+    "ingredients": "100% Rajmudi Rice"
+  },
+  {
+    "id": 2,
+    "name": "Namjangud Rasabale",
+    "price": 695,
+    "tag": "Farm Produce",
+    "popular": true,
+    "images": ["/image2.jpg"],
+    "description": "Pure Rajmudi Rice with natural taste and aroma.",
+    "benefits": "Boosts immunity, improves digestion, rich in healthy fats.",
+
+    "ingredients": "100% A2 Cow Milk Ghee"
+  },
+  {
+    "id": 3,
+    "name": "Raw Banana",
+    "price": 182,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image2.jpg"],
+    "benefits": "High in protein, helps in muscle building.",
+
+    "ingredients": "100% Tur Dal"
+  },
+  {
+    "id": 4,
+    "name": "Mexican Solo Papaya",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": true,
+    "images": ["/image3.jpg", "/image3.jpg"],
+    "benefits": "Good for heart health, rich in Vitamin E.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+  {
+    "id": 5,
+    "name": "Redlady Papaya",
+    "price": 182,
+    "tag": "Farm Produce",
+    "popular": true,
+    "images": ["/image2.jpg", "/image2.jpg"],
+    "benefits": "High in protein, strengthens immunity.",
+
+    "ingredients": "100% Tur Dal"
+  },
+  {
+    "id": 6,
+    "name": "Dragon Fruits",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Promotes healthy skin and heart.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+  {
+    "id": 7,
+    "name": "Coconut",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich in Vitamin E and antioxidants.",
+
+    "ingredients": "100% Groundnut Oil"
+  },
+  {
+    "id": 8,
+    "name": "Copra",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Heart-friendly and light on digestion.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+  {
+    "id": 9,
+    "name": "Tamrind",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Maintains cholesterol balance and skin health.",
+
+    "ingredients": "100% Groundnut Oil"
+  },
+  {
+    "id": 10,
+    "name": "Guava",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 11,
+    "name": "Passon Fruits",
+    "price": 493,
+    "tag": "Farm Produce",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 12,
+    "name": "Vermi Compost",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 13,
+    "name": "Vermi Wash",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 14,
+    "name": "Panchagavya",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 15,
+    "name": "Aneoberic Jeevamrut",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 16,
+    "name": "Gana Jeevamruta",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 17,
+    "name": "Neemastra",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 18,
+    "name": "Brhamastra",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 19,
+    "name": "Bilwa Rasayana",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 20,
+    "name": "Gau Krupamruta",
+    "price": 493,
+    "tag": "Bio inputs",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+  {
+    "id": 21,
+    "name": "Diya",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 22,
+    "name": "Havan Lakadi",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+  {
+    "id": 23,
+    "name": "Idols",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 24,
+    "name": "Dhoop Cup",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": false,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 25,
+    "name": "Key Chains",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": true,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 26,
+    "name": "Door Stickers",
+    "price": 493,
+    "tag": "Gomaya products",
+    "popular": true,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 27,
+    "name": "Moringa Powder",
+    "price": 493,
+    "tag": "Value ads",
+    "popular": true,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 28,
+    "name": "Banana Powder",
+    "price": 493,
+    "tag": "Value ads",
+    "popular": true,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  },
+
+  {
+    "id": 29,
+    "name": "Turmeric",
+    "price": 493,
+    "tag": "Value ads",
+    "popular": true,
+    "images": ["/image3.jpg"],
+    "benefits": "Rich source of healthy fats and antioxidants.",
+
+    "ingredients": "100% Cold-pressed Groundnut Oil"
+  }
+]

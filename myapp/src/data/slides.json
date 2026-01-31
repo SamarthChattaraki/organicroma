@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "title": "Say hello to organic living",
+    "image": "image2.jpg",
+    "cta": { "label": "Shop Now" },
+    "category": "Farm Produce"
+  },
+  {
+    "id": 2,
+    "title": "Fresh from farmer co-ops",
+    "image": "image4.jpg",
+    "cta": { "label": "Shop Now" },
+    "category": "Value ads"
+  },
+  {
+    "id": 3,
+    "title": "Cold-pressed oils, naturally",
+    "image": "image3.jpg",
+    "cta": { "label": "Shop Now" },
+    "category": "Gomaya products"
+  }
+]
