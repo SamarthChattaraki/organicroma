@@ -2405,8 +2405,13 @@ footer.footer {
   border-radius: 12px;
   overflow: hidden;
   background: white;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
   cursor: pointer;
+
+  /* ULTRA SMOOTH */
+  transform: translateZ(0); /* ADD - hardware acceleration */
+  will-change: transform; /* ADD - smooth movement */
+  backface-visibility: hidden; /* ADD - no jank */
 }
 
 .related-card:hover {
@@ -2430,6 +2435,26 @@ footer.footer {
 
 .related-card:hover h3 {
   color: #059669;
+}
+
+.related-slider-container {
+  overflow: hidden; /* ADD THIS - prevents scrollbars */
+  position: relative; /* ADD THIS - for smooth clipping */
+  contain: paint;
+}
+
+.related-slider {
+  overflow-x: hidden; /* You have this ✓ */
+  overscroll-behavior: none; /* You have this ✓ */
+  display: flex; /* ADD THIS - ensures proper flex layout */
+  flex-wrap: nowrap; /* ADD THIS - prevents wrapping */
+  will-change: scroll-position; /* ADD THIS - GPU acceleration */
+  scrollbar-width: none;
+
+  transform: translateZ(0); /* ADD - GPU acceleration */
+  backface-visibility: hidden; /* ADD - prevent flicker */
+  will-change: scroll-position; /* ADD - optimize rendering */
+  contain: layout style paint; /* ADD - isolate rendering */
 }
 
 /* ===================== Responsive (same as category cards) ===================== */

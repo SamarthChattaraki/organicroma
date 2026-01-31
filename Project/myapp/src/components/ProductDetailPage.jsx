@@ -14,7 +14,6 @@ const allProducts = productsData;
 
 export default function ProductDetailPage() {
   const { productName } = useParams();
-  const decodedProductName = decodeURIComponent(productName); // ✅ FIX
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("description");
@@ -24,7 +23,7 @@ export default function ProductDetailPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const product = allProducts.find(
-    (p) => p.name.toLowerCase() === decodedProductName.toLowerCase() // ✅ FIX
+    (p) => p.name.toLowerCase() === productName.toLowerCase(),
   );
 
   if (!product) return <p>Product not found!</p>;
@@ -79,37 +78,45 @@ export default function ProductDetailPage() {
   };
 
   /* ===============================================================
-      AUTO-SCROLL RELATED PRODUCTS — Infinite smooth sliding
-  =============================================================== */
+     AUTO-SCROLL RELATED PRODUCTS — BULLETPROOF INFINITE SCROLL
+  ================================================================ */
   const relatedRef = useRef(null);
 
   useEffect(() => {
     const slider = relatedRef.current;
-    if (!slider) return;
+    if (!slider || relatedProducts.length === 0) return;
 
-    let scrollSpeed = 0.6;
+    const scrollDistance = slider.scrollWidth / 2;
     let rafId;
+    let lastTime = performance.now();
+    let accumulatedDelta = 0;
+    const baseSpeed = 0.15; // Slightly slower for smoothness
 
-    const scroll = () => {
-      slider.scrollLeft += scrollSpeed;
+    const scroll = (currentTime) => {
+      const deltaTime = Math.min(currentTime - lastTime, 100); // Cap delta to prevent jumps
+      lastTime = currentTime;
 
-      if (slider.scrollLeft >= slider.scrollWidth / 2) {
-        slider.scrollLeft = 0;
+      accumulatedDelta += baseSpeed * deltaTime;
+      const moveDistance = Math.floor(accumulatedDelta);
+      accumulatedDelta -= moveDistance;
+
+      if (moveDistance > 0) {
+        const newPos = (slider.scrollLeft + moveDistance) % scrollDistance;
+        slider.scrollLeft = newPos < 0 ? scrollDistance + newPos : newPos;
       }
 
       rafId = requestAnimationFrame(scroll);
     };
 
     rafId = requestAnimationFrame(scroll);
-
     return () => cancelAnimationFrame(rafId);
-  }, []);
+  }, []); // Empty deps to match original behavior
 
   // FILTER RELATED
   const relatedProducts = allProducts.filter(
     (p) =>
       p.tag.toLowerCase() === product.tag.toLowerCase() &&
-      p.name.toLowerCase() !== product.name.toLowerCase()
+      p.name.toLowerCase() !== product.name.toLowerCase(),
   );
 
   // DUPLICATE LIST FOR INFINITE LOOP
@@ -213,9 +220,10 @@ export default function ProductDetailPage() {
           <div className="share-section">
             <p className="share-label">Share this product on:</p>
             <div className="share-icons">
+              {/* WhatsApp */}
               <a
                 href={`https://wa.me/?text=${encodeURIComponent(
-                  window.location.href
+                  window.location.href,
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -223,6 +231,7 @@ export default function ProductDetailPage() {
                 <FaWhatsapp />
               </a>
 
+              {/* Instagram – only opens & copies link */}
               <a
                 href="https://www.instagram.com"
                 target="_blank"
@@ -235,9 +244,10 @@ export default function ProductDetailPage() {
                 <FaInstagram />
               </a>
 
+              {/* Facebook */}
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                  window.location.href
+                  window.location.href,
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -297,12 +307,21 @@ export default function ProductDetailPage() {
         </div>
       </section>
 
-      {/* RELATED PRODUCTS */}
+      {/* ======================================================
+          RELATED PRODUCTS — BULLETPROOF INFINITE SMOOTH SLIDER
+      ====================================================== */}
       <section className="related-products-section">
         <h2>Related Products</h2>
 
         <div className="related-slider-container">
-          <div className="related-slider" ref={relatedRef}>
+          <div
+            className="related-slider"
+            ref={relatedRef}
+            style={{
+              scrollBehavior: "auto",
+              willChange: "scroll-position",
+            }}
+          >
             {infiniteList.map((related, index) => (
               <div
                 key={index}
