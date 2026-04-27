@@ -1,5 +1,3 @@
-// OrganicMandyaPage.jsx
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { FaWhatsapp } from "react-icons/fa";
 import { Helmet } from "react-helmet";
@@ -18,11 +16,21 @@ import Products from "./Products";
 import Header from "./Header";
 import Hero from "./Hero";
 
+// ✅ NEW IMPORTS
+import Login from "./Login";
+import Register from "./Register";
+import ProtectedRoute from "./ProtectedRoute";
+
 // ================= WhatsApp =================
-export function WhatsAppButton() {
+
+export function WhatsAppButton({ product }) {
+  const message = product
+    ? `Hi, I want to buy ${product.name} (₹${product.price}). Link: ${window.location.href}`
+    : "Hello, I want to know more about your products.";
+
   return (
     <a
-      href="https://wa.me/7259323346"
+      href={`https://wa.me/7259323346?text=${encodeURIComponent(message)}`}
       target="_blank"
       rel="noopener noreferrer"
       className="whatsapp-float"
@@ -44,7 +52,6 @@ function HomePage() {
       <WhyChooseOrganicTattva />
       <Certifications />
       <Videos />
-
       <Footer />
       <WhatsAppButton />
     </>
@@ -62,17 +69,69 @@ function CategoryPage() {
   );
 }
 
-// Main export
+// ================= MAIN =================
 export default function OrganicPage() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/category/:categoryName" element={<CategoryPage />} />
-        <Route path="/product/:productName" element={<ProductDetailPage />} />
-        <Route path="/about-us" element={<AboutUsPage />} />
-        <Route path="/testimonial" element={<TestimonialPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
+        {/* ✅ PUBLIC */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* ✅ PROTECTED */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/category/:categoryName"
+          element={
+            <ProtectedRoute>
+              <CategoryPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/product/:productName"
+          element={
+            <ProtectedRoute>
+              <ProductDetailPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/about-us"
+          element={
+            <ProtectedRoute>
+              <AboutUsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/testimonial"
+          element={
+            <ProtectedRoute>
+              <TestimonialPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/gallery"
+          element={
+            <ProtectedRoute>
+              <GalleryPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );

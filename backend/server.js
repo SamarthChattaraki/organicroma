@@ -1,47 +1,112 @@
-import express from "express";
-import axios from "axios";
-import cors from "cors";
+require("dotenv").config();
+
+const express = require("express");
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 const app = express();
-app.use(cors());
+
+// ✅ Middleware
 app.use(express.json());
+app.use(cookieParser());
 
-const TOKEN =
-  "EAATnH8IdLdUBQGZAsDcd0oMgRgaVXW9JmleD2mST0B56FZBg8JNpuGZCgRZBoLY8tya86CAIAY2Oti5eUcWo9g03ZBl1vLQDwIlTZAMi8lgLYir5JJ1wXchr4sRRBLilAC8WpmbckRUyf8fs2B4zfYhUGaMxQwEHPZBgFXgfD5CNS0fFElPfPxlfKxxV9ZCLdDAHMwZDZD";
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true, // IMPORTANT
+  }),
+);
 
-const PHONE_NUMBER_ID = "903734079484245";
+// ✅ MongoDB Connect
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected ✅"))
+  .catch((err) => console.log(err));
 
-app.post("/send-order", async (req, res) => {
-  let { vendorNumber, message } = req.body;
+// ✅ User Schema
+const User = mongoose.model("User", {
+  name: String,
+  email: { type: String, unique: true },
+  password: String,
+});
 
-  // Remove "+" if it exists
-  vendorNumber = vendorNumber.replace("+", "");
-
+// ================= REGISTER =================
+app.post("/register", async (req, res) => {
   try {
-    const response = await axios.post(
-      `https://graph.facebook.com/v20.0/${PHONE_NUMBER_ID}/messages`,
-      {
-        messaging_product: "whatsapp",
-        recipient_type: "individual",
-        to: vendorNumber,
-        type: "text",
-        text: { body: message },
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const { name, email, password } = req.body;
 
-    console.log("WhatsApp API response:", response.data);
+    const hashed = await bcrypt.hash(password, 10);
 
-    res.json({ success: true, message: "Message sent to vendor!" });
-  } catch (error) {
-    console.error("WHATSAPP ERROR:", error.response?.data || error);
-    res.status(500).json({ success: false, error: error.response?.data });
+    const user = new User({
+      name,
+      email,
+      password: hashed,
+    });
+
+    await user.save();
+
+    res.json({ success: true, message: "User registered" });
+  } catch (err) {
+    res.status(400).json({ error: "User already exists" });
   }
 });
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+// ================= LOGIN (COOKIE BASED) =================
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(400).json({ error: "User not found" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) return res.status(400).json({ error: "Invalid password" });
+
+    const token = jwt.sign({ id: user._id }, "secret123", {
+      expiresIn: "1d",
+    });
+
+    // ✅ SET COOKIE (IMPORTANT)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // true in production (HTTPS)
+      sameSite: "lax",
+    });
+
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ error: "Login failed" });
+  }
+});
+
+// ================= LOGOUT =================
+app.post("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ success: true, message: "Logged out" });
+});
+
+// ================= PROTECTED ROUTE =================
+app.get("/profile", async (req, res) => {
+  try {
+    const token = req.cookies.token;
+
+    if (!token) return res.status(401).json({ error: "No token" });
+
+    const decoded = jwt.verify(token, "secret123");
+
+    const user = await User.findById(decoded.id).select("-password");
+
+    res.json(user);
+  } catch (err) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
+
+app.listen(5000, () => {
+  console.log("🚀 Server running on port 5000");
+});

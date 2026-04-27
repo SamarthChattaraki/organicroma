@@ -2753,3 +2753,124 @@ footer.footer {
     opacity: 1;
   }
 }
+
+/* Center full page */
+.auth-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #e6f4ea, #ffffff);
+}
+
+/* Card */
+.auth-box {
+  background: #fff;
+  padding: 40px;
+  width: 350px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Title */
+.auth-box h2 {
+  margin-bottom: 20px;
+  color: #2e7d32;
+}
+
+/* Inputs */
+.auth-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s;
+}
+
+.auth-box input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Button */
+.auth-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.auth-box button:hover {
+  background: #388e3c;
+}
+
+/* Link */
+.auth-link {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.auth-link span {
+  color: #1976d2;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.auth-link span:hover {
+  text-decoration: underline;
+}
+
+/*logout*/
+
+.logout-btn,
+.login-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #2e7d32; /* same green theme */
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-btn:hover,
+.login-btn:hover {
+  background: #1b5e20;
+}
+
+.logout-btn,
+.login-btn {
+  padding: 6px 12px;
+  border: none;
+  background: #2e7d32;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-btn:hover,
+.login-btn:hover {
+  background: #1b5e20;
+}
+/* Hide mobile logout on desktop */
+.header-nav .logout-btn,
+.header-nav .login-btn {
+  display: none;
+}
+
+/* Show only on mobile */
+@media (max-width: 1024px) {
+  .header-nav .logout-btn,
+  .header-nav .login-btn {
+    display: block;
+  }
+}

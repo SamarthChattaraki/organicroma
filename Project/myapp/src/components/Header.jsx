@@ -16,7 +16,37 @@ export default function Header() {
   const [mobileSearchActive, setMobileSearchActive] = useState(false);
   const [mobileDropdownActive, setMobileDropdownActive] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
   const navigate = useNavigate();
+
+  // ✅ LOGIN CHECK
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/profile", {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          setIsLoggedIn(true);
+        } else {
+          setIsLoggedIn(false);
+        }
+      })
+      .catch(() => setIsLoggedIn(false));
+  }, []);
+
+  // ✅ LOGOUT FUNCTION
+  const handleLogout = async () => {
+    await fetch("http://localhost:5000/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    alert("Logged out successfully ✅");
+    navigate("/login");
+    window.location.reload(); // refresh UI
+  };
 
   const navRef = useRef(null);
   const hamburgerRef = useRef(null);
@@ -26,7 +56,6 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      // Close mobile nav
       if (
         navActive &&
         navRef.current &&
@@ -37,7 +66,6 @@ export default function Header() {
         setNavActive(false);
       }
 
-      // Close mobile dropdown
       if (
         mobileDropdownActive &&
         dropdownRef.current &&
@@ -46,7 +74,6 @@ export default function Header() {
         setMobileDropdownActive(false);
       }
 
-      // Close mobile search overlay
       if (
         mobileSearchActive &&
         overlayRef.current &&
@@ -57,7 +84,6 @@ export default function Header() {
         setShowSuggestions(false);
       }
 
-      // Close suggestion dropdown if click outside suggestions
       if (
         showSuggestions &&
         suggestionRef.current &&
@@ -75,7 +101,7 @@ export default function Header() {
   const handleSearch = (term) => {
     if (!term) return;
     const product = allProducts.find(
-      (p) => p.name.toLowerCase() === term.toLowerCase()
+      (p) => p.name.toLowerCase() === term.toLowerCase(),
     );
     if (product) {
       navigate(`/product/${encodeURIComponent(product.name)}`);
@@ -96,7 +122,7 @@ export default function Header() {
     setSearchTerm(value);
     if (value.length > 0) {
       const filtered = allProducts.filter((p) =>
-        p.name.toLowerCase().includes(value.toLowerCase())
+        p.name.toLowerCase().includes(value.toLowerCase()),
       );
       setSuggestions(filtered);
       setShowSuggestions(true);
@@ -138,77 +164,12 @@ export default function Header() {
         >
           🔍
         </span>
-
-        {/* Mobile slide-in search overlay */}
-        <div
-          className={`mobile-search-overlay ${
-            mobileSearchActive ? "active" : ""
-          }`}
-          ref={overlayRef}
-        >
-          {/* Block 1: Header with label */}
-          <div className="mobile-search-header">
-            <div className="mobile-search-label">Search Our Site</div>
-          </div>
-
-          {/* Block 2: Input + Icon */}
-          <div className="mobile-search-input-block">
-            <div className="mobile-search-input-wrapper">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={handleChange}
-                onKeyDown={(e) => e.key === "Enter" && handleSearch(searchTerm)}
-                autoFocus
-              />
-              <span
-                className="search-icon"
-                onClick={() => handleSearch(searchTerm)}
-              >
-                🔍
-              </span>
-            </div>
-          </div>
-
-          {/* Suggestions */}
-          {showSuggestions && (
-            <ul className="search-suggestions" ref={suggestionRef}>
-              {suggestions.length > 0 ? (
-                suggestions.map((s) => (
-                  <li
-                    key={s.id}
-                    className="suggestion-item"
-                    onClick={() => handleSuggestionClick(s.name)}
-                  >
-                    <img
-                      src={s.images[0]}
-                      alt={s.name}
-                      className="suggestion-img"
-                    />
-                    <div className="suggestion-details">
-                      <span className="suggestion-name">{s.name}</span>
-                      <span className="suggestion-price">₹{s.price}</span>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <li className="suggestion-item no-suggestion">
-                  No products found
-                </li>
-              )}
-            </ul>
-          )}
-        </div>
       </div>
 
       {/* Navigation */}
       <nav className={`header-nav ${navActive ? "active" : ""}`} ref={navRef}>
-        <Link to="/" onClick={() => setNavActive(false)}>
-          Home
-        </Link>
+        <Link to="/">Home</Link>
 
-        {/* Product Category - Mobile click toggle */}
         <div className="dropdown" ref={dropdownRef}>
           <button
             className="dropbtn"
@@ -219,34 +180,49 @@ export default function Header() {
           >
             Product Category ▾
           </button>
+
           <div
             className="dropdown-content"
             style={{ display: mobileDropdownActive ? "block" : "" }}
           >
             {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                to={`/category/${cat.name}`}
-                onClick={() => {
-                  setNavActive(false);
-                  setMobileDropdownActive(false);
-                }}
-              >
+              <Link key={cat.id} to={`/category/${cat.name}`}>
                 {cat.name}
               </Link>
             ))}
           </div>
         </div>
 
-        <Link to="/testimonial" onClick={() => setNavActive(false)}>
-          Testimonial
-        </Link>
-        <Link to="/about-us" onClick={() => setNavActive(false)}>
-          About Us
-        </Link>
-        <Link to="/gallery" onClick={() => setNavActive(false)}>
-          Gallery
-        </Link>
+        <Link to="/testimonial">Testimonial</Link>
+        <Link to="/about-us">About Us</Link>
+        <Link to="/gallery">Gallery</Link>
+
+        {/* ✅ MOBILE LOGIN / LOGOUT */}
+        <div style={{ marginTop: "10px", padding: "10px" }}>
+          {isLoggedIn ? (
+            <button
+              className="logout-btn"
+              onClick={() => {
+                handleLogout();
+                setNavActive(false);
+              }}
+              style={{ width: "100%" }}
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              className="login-btn"
+              onClick={() => {
+                navigate("/login");
+                setNavActive(false);
+              }}
+              style={{ width: "100%" }}
+            >
+              Login
+            </button>
+          )}
+        </div>
       </nav>
 
       {/* Desktop Search */}
@@ -259,6 +235,7 @@ export default function Header() {
           >
             🔍
           </span>
+
           <input
             type="text"
             placeholder="Search products..."
@@ -266,32 +243,32 @@ export default function Header() {
             onChange={handleChange}
             onKeyDown={(e) => e.key === "Enter" && handleSearch(searchTerm)}
           />
+
           {showSuggestions && (
             <ul className="search-suggestions" ref={suggestionRef}>
               {suggestions.length > 0 ? (
                 suggestions.map((s) => (
-                  <li
-                    key={s.id}
-                    className="suggestion-item"
-                    onClick={() => handleSuggestionClick(s.name)}
-                  >
-                    <img
-                      src={s.images[0]}
-                      alt={s.name}
-                      className="suggestion-img"
-                    />
-                    <div className="suggestion-details">
-                      <span className="suggestion-name">{s.name}</span>
-                      <span className="suggestion-price">₹{s.price}</span>
-                    </div>
+                  <li key={s.id} onClick={() => handleSuggestionClick(s.name)}>
+                    {s.name}
                   </li>
                 ))
               ) : (
-                <li className="suggestion-item no-suggestion">
-                  No products found
-                </li>
+                <li>No products found</li>
               )}
             </ul>
+          )}
+        </div>
+
+        {/* ✅ DESKTOP LOGIN / LOGOUT */}
+        <div style={{ marginLeft: "10px" }}>
+          {isLoggedIn ? (
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          ) : (
+            <button className="login-btn" onClick={() => navigate("/login")}>
+              Login
+            </button>
           )}
         </div>
       </div>
